@@ -191,6 +191,9 @@ const (
 	// Datadog tag format.
 	// See http://docs.datadoghq.com/guides/metrics/#tags
 	Datadog
+	// SignalFX tag format.
+	// https://docs.signalfx.com/en/latest/integrations/collectd-info.html#signalfx-metadata-plugin
+	SignalFX
 )
 
 var (
@@ -224,6 +227,23 @@ var (
 			}
 			return buf.String()
 		},
+		SignalFX: func(tags []tag) string {
+			var buf bytes.Buffer
+			_ = buf.WriteByte('[')
+			firstTag := true
+			for _, tag := range tags {
+				if firstTag {
+					firstTag = false
+				} else {
+					_ = buf.WriteByte(',')
+				}
+				_, _ = buf.WriteString(tag.K)
+				_ = buf.WriteByte('=')
+				_, _ = buf.WriteString(tag.V)
+			}
+			_ = buf.WriteByte(']')
+			return buf.String()
+		},
 	}
 	splitFuncs = map[TagFormat]func(string) []tag{
 		InfluxDB: func(s string) []tag {
@@ -242,6 +262,16 @@ var (
 			tags := make([]tag, len(pairs))
 			for i, pair := range pairs {
 				kv := strings.Split(pair, ":")
+				tags[i] = tag{K: kv[0], V: kv[1]}
+			}
+			return tags
+		},
+		SignalFX: func(s string) []tag {
+			s = s[1 : len(s)-1]
+			pairs := strings.Split(s, ",")
+			tags := make([]tag, len(pairs))
+			for i, pair := range pairs {
+				kv := strings.Split(pair, "=")
 				tags[i] = tag{K: kv[0], V: kv[1]}
 			}
 			return tags

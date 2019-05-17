@@ -194,6 +194,9 @@ func isNegative(v interface{}) bool {
 
 func (c *conn) appendBucket(prefix, bucket string, tags string) {
 	c.appendString(prefix)
+	if c.tagFormat == SignalFX {
+		c.appendString(tags)
+	}
 	c.appendString(bucket)
 	if c.tagFormat == InfluxDB {
 		c.appendString(tags)

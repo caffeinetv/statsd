@@ -179,6 +179,12 @@ func TestDatadogTags(t *testing.T) {
 	}, TagsFormat(Datadog), Tags("tag1", "value1", "tag2", "value2"))
 }
 
+func TestSignalFXTags(t *testing.T) {
+	testOutput(t, "[tag1=value1,tag2=value2]test_key:1|c", func(c *Client) {
+		c.Increment(testKey)
+	}, TagsFormat(SignalFX), Tags("tag1", "value1", "tag2", "value2"))
+}
+
 func TestNoTagFormat(t *testing.T) {
 	testOutput(t, "test_key:1|c", func(c *Client) {
 		c.Increment(testKey)
