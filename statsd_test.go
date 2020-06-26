@@ -49,6 +49,12 @@ func TestHistogram(t *testing.T) {
 	})
 }
 
+func TestDistribution(t *testing.T) {
+	testOutput(t, "test_dist_key:97|d", func(c *Client) {
+		c.Distribution("test_dist_key", 97)
+	})
+}
+
 func TestNumbers(t *testing.T) {
 	testOutput(t,
 		"test_key:1|g\n"+
