@@ -116,6 +116,14 @@ func (c *Client) Histogram(bucket string, value interface{}) {
 	c.conn.metric(c.prefix, bucket, value, "h", c.rate, c.tags)
 }
 
+// Distribution sends a distribution value to a bucket.
+func (c *Client) Distribution(bucket string, value interface{}) {
+	if c.skip() {
+		return
+	}
+	c.conn.metric(c.prefix, bucket, value, "d", c.rate, c.tags)
+}
+
 // A Timing is an helper object that eases sending timing values.
 type Timing struct {
 	start time.Time
